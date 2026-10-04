@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1b0c08" />
+    <script>
+      // Apply the saved preference before the stylesheet paints the page.
+      try {
+        const theme = localStorage.getItem('planpilot.theme') === 'light' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === 'light' ? '#faf5ee' : '#1b0c08';
+      } catch { /* Keep the default dark theme when browser storage is unavailable. */ }
+    </script>
+    <meta name="description" content="Understand your dental benefits. Explore your options. Plan your next step with confidence with PlanPilot." />
+    <title>PlanPilot — Your dental benefits, made clear</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
