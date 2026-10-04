@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import type { Profile } from './accountApi';
 import { ThemeToggle } from './Theme';
 
-export type Page = 'overview' | 'my-plan' | 'settings';
+export type Page = 'overview' | 'my-plan' | 'benefits' | 'settings';
 const pages: { id: Page; title: string; detail: string; path: string }[] = [
   { id: 'overview', title: 'Overview', detail: 'Your insurance, at a glance', path: 'M3 3h7v7H3V3Zm11 0h7v7h-7V3ZM3 14h7v7H3v-7Zm11 0h7v7h-7v-7Z' },
   { id: 'my-plan', title: 'My Plan', detail: 'Find clarity with Bili', path: 'M6 3h8l4 4v14H6V3Zm8 0v5h4M9 12h6m-6 4h6' },
+  { id: 'benefits', title: 'Benefits', detail: 'Usage, care dates, costs and reminders', path: 'M4 5h16v16H4V5Zm3-3v6m10-6v6M4 11h16m-12 4h3m3 0h2' },
   { id: 'settings', title: 'Settings', detail: 'Your profile and account', path: 'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM4 21v-3a8 8 0 0 1 16 0v3' },
 ];
 export function AppHeader({ page, profile, onNavigate }: { page: Page; profile: Profile; onNavigate: (page: Page) => void }) {

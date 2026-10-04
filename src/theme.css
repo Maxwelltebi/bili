@@ -100,6 +100,7 @@
   background: linear-gradient(105deg, #bf4413, #ab340c);
   box-shadow: 0 8px 25px #a33e171b;
 }
+:root[data-theme='light'] .primary:hover { filter: brightness(1.04); }
 :root[data-theme='light'] :is(button, a, input, select, textarea):focus-visible { outline-color: var(--accent); }
 :root[data-theme='light'] :is(.goal-card, .consult-choice):has(input:focus-visible) { outline-color: var(--accent); }
 

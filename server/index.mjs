@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { ZodError } from 'zod';
 import { consult, AppError } from './consultation.mjs';
 import { estimate } from './finance.mjs';
+import { compareNetworks } from './benefits.mjs';
 import { createAccountStore, createDemoSessions } from './account.mjs';
 
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' };
@@ -28,12 +29,12 @@ export function createApp({ consultant = consult, estimator = estimate, accounts
         if (origin && ![req.headers.host, '127.0.0.1:5173', 'localhost:5173'].includes(new URL(origin).host)) throw new AppError(403, 'origin', 'This request is not allowed.');
         if (req.headers['sec-fetch-site'] === 'cross-site') throw new AppError(403, 'origin', 'This request is not allowed.');
         if (url.pathname === '/api/health' && req.method === 'GET') return send(res, 200, { configured: !!process.env.GEMINI_API_KEY });
-        if (!['/api/consult', '/api/estimate', '/api/account', '/api/profile', '/api/snapshot'].includes(url.pathname)) return send(res, 404, { message: 'Endpoint not found.' });
+        if (!['/api/consult', '/api/estimate', '/api/network-estimate', '/api/account', '/api/profile', '/api/snapshot'].includes(url.pathname)) return send(res, 404, { message: 'Endpoint not found.' });
         const method = url.pathname === '/api/account' ? 'GET' : ['/api/profile', '/api/snapshot'].includes(url.pathname) ? 'PUT' : 'POST';
         if (req.method !== method) return send(res, 405, { message: `Use ${method} for this endpoint.` });
         const now = Date.now(); for (const [key, value] of limits) if (now - value.start > 60000) limits.delete(key);
         const ip = req.socket.remoteAddress || 'local'; const key = `${ip}:${url.pathname}`; const bucket = limits.get(key) || { start: now, count: 0 };
-        const limit = ['/api/estimate', '/api/snapshot'].includes(url.pathname) ? 120 : 30;
+        const limit = ['/api/estimate', '/api/network-estimate', '/api/snapshot'].includes(url.pathname) ? 120 : 30;
         if (++bucket.count > limit) throw new AppError(429, 'rate_limit', 'Please wait a moment before sending another request.'); limits.set(key, bucket);
         if (url.pathname === '/api/account') return send(res, 200, await accounts.bootstrap(sessions.start(req, res)));
         const body = await readJson(req);
@@ -43,6 +44,7 @@ export function createApp({ consultant = consult, estimator = estimate, accounts
           if (!id) throw new AppError(401, 'session_expired', 'Reload the app to restore your demo account.');
           result = url.pathname === '/api/profile' ? await accounts.saveProfile(id, body) : await accounts.saveSnapshot(id, body);
         } else if (url.pathname === '/api/estimate') result = await estimator(body);
+        else if (url.pathname === '/api/network-estimate') result = compareNetworks(body);
         else result = await consultant(body, { signal: controller.signal });
         if (!res.destroyed) send(res, 200, result); return;
       }

@@ -25,7 +25,7 @@ const question = { ...ready, id: 'question', kind: 'question', title: 'Do you kn
 const saved = { version: 1, goal: 'insurance', explanation: '', answers: [{ id: 'goal', prompt: 'What brings you here?', choice: 'Understand insurance', text: '' }], turn: ready, history: [], financialState: null, financialDraft: null, financialResult: null, documentNames: [] };
 const json = value => Response.json(value);
 
-test('first visit opens My Plan, menu has three pages, and the auto-loaded profile can be edited', async () => {
+test('first visit opens My Plan, menu has four pages, and the auto-loaded profile can be edited', async () => {
   const requests = []; let currentProfile = profile;
   globalThis.fetch = async (url, options) => {
     requests.push(String(url));
@@ -36,7 +36,7 @@ test('first visit opens My Plan, menu has three pages, and the auto-loaded profi
   render(<React.StrictMode><App /></React.StrictMode>);
   await screen.findByRole('button', { name: 'Begin my journey' }); assert.equal(requests.filter(url => url === '/api/account').length, 1, 'StrictMode shares one bootstrap request');
   fireEvent.click(screen.getByRole('button', { name: 'Open navigation menu' }));
-  assert.equal(screen.getAllByRole('button', { name: /Overview|My Plan|Settings/ }).length, 3);
+  assert.equal(screen.getAllByRole('button', { name: /Overview|My Plan|Benefits|Settings/ }).length, 4);
   fireEvent.click(screen.getByRole('button', { name: 'Settings', exact: true }));
   await screen.findByRole('heading', { name: 'Your profile.' });
   assert.equal(screen.getByLabelText('Full name').value, profile.name);

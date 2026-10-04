@@ -96,6 +96,14 @@ try {
     assert.ok((await evaluate(`document.querySelector('.overview-metrics').innerText`)).includes('$1,100.00'));
     await evaluate(`document.querySelector('[aria-label="Open navigation menu"]').click()`);
     await waitFor(`!!document.querySelector('.navigation-drawer[open]')`);await capture('navigation');
+    await evaluate(`document.querySelector('.navigation-link[aria-label="Benefits"]').click()`);
+    await waitFor(`!!document.querySelector('.benefits-page')`); await capture('benefits-usage');
+    for (const [tab, file] of [['care','benefits-care'],['network','benefits-network'],['reminders','benefits-reminders']]) {
+      await evaluate(`document.querySelector('#benefits-tab-${tab}').click()`);
+      await waitFor(`!!document.querySelector('#benefits-panel-${tab}')`); await capture(file);
+    }
+    await evaluate(`document.querySelector('[aria-label="Open navigation menu"]').click()`);
+    await waitFor(`!!document.querySelector('.navigation-drawer[open]')`);
     await evaluate(`document.querySelector('.navigation-link[aria-label="Settings"]').click()`);
     await waitFor(`!!document.querySelector('.profile-form')`);await capture('settings');
     await waitFor(`localStorage.getItem('visual.snapshot')&&JSON.parse(localStorage.getItem('visual.snapshot')).financialState`);

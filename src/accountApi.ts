@@ -1,11 +1,12 @@
 import { z } from 'zod';
 import { turnSchema, type Answer } from './consultationApi';
 import { financialSchema, estimateSchema, calculateEstimate } from './financeApi';
+import { benefitsSchema } from './benefits';
 
 export const profileSchema = z.object({ id: z.uuid(), name: z.string().min(1).max(80), email: z.email().max(180), phone: z.string().max(40), company: z.string().max(100), createdAt: z.string() });
 export type Profile = z.infer<typeof profileSchema>;
 const historySchema = z.object({ turn: turnSchema, answer: z.object({ id: z.string(), prompt: z.string(), choice: z.string(), text: z.string() }), financialState: financialSchema.nullable(), financialDraft: financialSchema.nullable() });
-export const snapshotSchema = z.object({ version: z.literal(1), goal: z.string(), explanation: z.string(), answers: z.array(historySchema.shape.answer), turn: turnSchema.nullable(), history: z.array(historySchema), financialState: financialSchema.nullable(), financialDraft: financialSchema.nullable(), documentNames: z.array(z.string()), financialResult: estimateSchema.nullable().optional(), updatedAt: z.string().optional() });
+export const snapshotSchema = z.object({ version: z.literal(1), goal: z.string(), explanation: z.string(), answers: z.array(historySchema.shape.answer), turn: turnSchema.nullable(), history: z.array(historySchema), financialState: financialSchema.nullable(), financialDraft: financialSchema.nullable(), documentNames: z.array(z.string()), financialResult: estimateSchema.nullable().optional(), updatedAt: z.string().optional(), benefits: benefitsSchema.optional() });
 export type Snapshot = z.infer<typeof snapshotSchema>;
 export type StoredAnswer = Answer;
 export const accountSchema = z.object({ profile: profileSchema, snapshot: snapshotSchema.nullable(), firstVisit: z.boolean(), storage: z.enum(['supabase', 'device']) });

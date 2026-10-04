@@ -28,9 +28,9 @@ export function buildRuntimeContext(request, financialResult = null) {
       documentUpload: true, nativeDocumentUnderstanding: true, answerReviewAndEditing: true, coverageCheckpoints: true, sourceExcerpts: true, textPlanExport: true,
       multiSelectGoalCards: false, numericInput: true, dateSelector: true,
       costCalculator: true, uncertaintyAnalysis: false, scheduleOptimizer: true, interactiveTimeline: true,
-      networkComparisonTool: false, benefitsTracking: true, nearbyClinicSearch: false, publishedClinicPrices: false, reminderCalendarExport: true,
+      networkComparisonTool: true, benefitsTracking: true, paidClaimTracking: true, inAppBenefitReminders: true, nearbyClinicSearch: false, publishedClinicPrices: false, reminderCalendarExport: true,
       reminderScheduling: false, persistentConsultations: true, insurerVerification: false, pdfExport: false,
     },
-    availableTools: ['deterministic_cost_calculator', 'two_benefit_year_schedule_comparison'],
+    availableTools: ['deterministic_cost_calculator', 'two_benefit_year_schedule_comparison', 'reviewed_network_cost_comparison'],
   };
 }

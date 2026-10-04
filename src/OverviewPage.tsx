@@ -2,13 +2,14 @@ import type { Profile, Snapshot } from './accountApi';
 import { CapturedDetails } from './CapturedDetails';
 import { formatMoney } from './financeApi';
 
-export function OverviewPage({ profile, snapshot, onContinue }: { profile: Profile; snapshot: Snapshot | null; onContinue: () => void }) {
+export function OverviewPage({ profile, snapshot, onContinue, onBenefits }: { profile: Profile; snapshot: Snapshot | null; onContinue: () => void; onBenefits?: () => void }) {
   const result = snapshot?.financialState ? snapshot.financialResult : null;
   const turn = snapshot?.turn;
   const captured = [...new Map([...(snapshot?.history.flatMap(entry => entry.turn.facts) || []), ...(turn?.facts || [])].map(fact => [fact.label, fact])).values()];
   const coverageTurn = turn ? { ...turn, facts: captured } : null;
   const ready = turn?.kind === 'ready';
   return <main className="account-page overview-page">
+    {onBenefits && <button className="benefits-overview-link voice-button" onClick={onBenefits}>Open benefits tracker, care sequence and network comparison →</button>}
     <div className="page-heading"><div><p className="eyebrow"><span /> YOUR BENEFITS, IN FOCUS</p><h1>Welcome back, {profile.name.split(' ')[0]}.</h1><p>{turn ? 'Your insurance story, right where you left it.' : 'A little clarity starts with your plan.'}</p></div><button className="voice-button" onClick={onContinue}>{snapshot ? 'Continue with Bili' : 'Begin my journey'}<span aria-hidden="true">→</span></button></div>
     {!turn ? <section className="overview-empty"><div className="empty-landscape" /><div><p className="journey-context">Your next clear step</p><h2>Let’s make sense<br />of your dental benefits.</h2><p>Bili will help you understand your insurance, read a dentist’s estimate, and see what you may pay.</p><button className="primary" onClick={onContinue}>{snapshot?.answers.length ? 'Resume my journey' : 'Start My Plan'}<span aria-hidden="true">→</span></button><small>Your insurance details will appear here as you share them.</small></div></section> : <>
       <section className="overview-banner"><div><span className="status-pill">{ready ? 'Your planning summary' : 'Journey in progress'}</span><h2>{ready ? turn.title : 'Every detail brings a little more clarity.'}</h2><p>{ready ? turn.context : 'You can return to your last question whenever you’re ready.'}</p></div><button className="primary" onClick={onContinue}>{ready ? 'Review My Plan' : 'Pick up where I left off'}<span aria-hidden="true">→</span></button></section>

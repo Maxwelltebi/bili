@@ -2,11 +2,12 @@ import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import { AppError, answerSchema, turnSchema } from './consultation.mjs';
 import { financialSchema, financialDraftSchema, estimate } from './finance.mjs';
+import { benefitsSchema } from './benefits.mjs';
 
 export const profileInputSchema = z.object({ name: z.string().trim().min(1).max(80), email: z.email().max(180), phone: z.string().trim().max(40), company: z.string().trim().max(100) }).strict();
 const savedTurn = turnSchema.extend({ id: z.string().min(1).max(100) });
 const historyEntry = z.object({ turn: savedTurn, answer: answerSchema, financialState: financialSchema.nullable(), financialDraft: financialDraftSchema.nullable() }).strict();
-export const snapshotSchema = z.object({ version: z.literal(1), goal: z.string().max(100), explanation: z.string().max(1000), answers: z.array(answerSchema).max(200), turn: savedTurn.nullable(), history: z.array(historyEntry).max(200), financialState: financialSchema.nullable(), financialDraft: financialDraftSchema.nullable(), documentNames: z.array(z.string().max(180)).max(5) }).strict();
+export const snapshotSchema = z.object({ version: z.literal(1), goal: z.string().max(100), explanation: z.string().max(1000), answers: z.array(answerSchema).max(200), turn: savedTurn.nullable(), history: z.array(historyEntry).max(200), financialState: financialSchema.nullable(), financialDraft: financialDraftSchema.nullable(), documentNames: z.array(z.string().max(180)).max(5), benefits: benefitsSchema.optional() }).strict();
 const defaultProfile = id => ({ id, name: 'Alex Morgan', email: 'alex.morgan@example.com', phone: '', company: 'Example Company', createdAt: new Date().toISOString() });
 const profileFromRow = row => ({ id: row.id, name: row.display_name, email: row.email, phone: row.phone || '', company: row.company || '', createdAt: row.created_at });
 
